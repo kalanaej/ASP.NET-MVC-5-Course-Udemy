@@ -1,0 +1,24 @@
+# Phase 2
+	1. To manage bootstrap keywords go to get getbootstrap.com/css/
+
+# Phase 3
+	1. We can change our label name from two places
+		i) from Model/.cs file ( using annotaions -: [Display(Name = "Date of Birth")] )
+		ii) from View/.cshtml file ( using "<label></label>" method instead of "LabelFor" )
+	
+	2. Both labeling types have unique consiquences. (Commented in codes)
+
+Below places must concern when we do this Section
+	1. Model
+		i) Customer.cs
+		ii) MembershipType.cs
+		iii) ApplicationDbContext.cs
+		
+	2. Controllers
+		i) CustomerController.cs
+	
+	3. ViewModels
+		i) CustomerFormViewModel.cs
+	
+	4. View
+		i) CustomerForm.cshtml
