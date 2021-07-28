@@ -1,0 +1,23 @@
+# Phase 2
+	1. To change color of error message, navigate to Content/site.css
+	
+# Phase 5
+	1. Birthdate should enter as D/M/Y. not D M Y (ex -: 1/1/2010 and not as 1 Jan 2010)
+	
+Below places must concern when we do this Section
+	1. Model
+		i) Customer.cs
+		ii) MembershipType.cs
+		iii) Min18YearsIfAMember
+		
+	2. Controllers
+		i) CustomerController.cs
+	
+	3. ViewModels
+		i) CustomerFormViewModel.cs
+	
+	4. View
+		i) CustomerForm.cshtml
+	
+	5. Content
+		i) Site.css

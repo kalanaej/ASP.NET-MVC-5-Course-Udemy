@@ -1,0 +1,49 @@
+# third Phase
+
+	1. Open Visual Studio
+	2. Click Extentions tab
+	3. Navigate to "online" panel and search these tools
+		- Productivity Power Tools.
+		- Web Essentials.
+		- Resharper (optional)
+
+
+# fourth Phase
+
+	1. Go to the File tab and create new project.
+	2. In there search "ASP.NET web application (.Net Framework)" which has C# tag (not visual basics). 
+	3. Give a project name and click create.
+	4. Next click MVC line then click create again.
+	5. After project creation go to solution explorer and open App_Start/Routeconfig.cs
+
+			routes.MapRoute(
+				name: // Name of the contoller
+				url: // Name of the action
+				defaults: // Id which is pass to the action
+			);
+
+	6. In Content folder we can store CSSA files, images, and any client side assets.
+	7. favicon.ico is the icon that display on the browser.
+	8. Web.config use to configure our application.
+		- <connectionStrings> : use to specify our database connectionStrings
+		- <appSettings> : use to define configuration settings for our application.
+	
+# fifth Phase
+	
+	1. right click on models then Add > Class. Then give name to the class and click create.
+	2. To access models we need a controler. Therefore, right click on Controllers then add > Controller. 
+	3. Then select "MVC 5 Controller - Empty". After that give a name to the controller and then click Add button. In popup window give a name to the controller.
+	4. In controller class you may have to import your model class like -> "using projectName.modelName;"
+	5. To access controller file we need a view. Therefore create a view by right click on view > Movies folder. Then Add > view select "MVC 5 view" and give a name to the view.
+	6. Put a tik on "use a layout page" click 3 dots. Navigate to Vidly > Views > Shared then select _Layout.cshtml. Then add the view.
+
+# sixth Phase
+	
+	1. Go to bootswatch.com.
+	2. Navigate to Themes > Lumen
+	3. Then under Lumen, select bootstrap.css and rename that as bootstrap-lumen. Then save it.
+	4. After that add that css file into content folder.
+	5. To apply new css settings, go to App_Start and select BundleConfig.cs file.
+	6. BundleConfig.cs file includes all css, js, jqueries into a bundle.
+	7. In css bundle, rename bootstrap.css file into bootstrap-lumen.css
+		

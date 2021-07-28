@@ -1,0 +1,86 @@
+# Second Phase
+
+	1. Entity framework is a tool we used to access a database more accuratly.
+	2. It maps data in relational database into objects in our applications.
+	
+	
+# Third Phase
+
+	1. There are two workflows in frameworks.
+		i) Database first
+		ii) Code first
+		
+	2. Database first -: design database tables first and then have any framework genarate the correspoding domain classes
+	3. Code first -: Create domain classes and let the framework to create database tables for us. (This is the most used method)
+	
+	
+# Forth Phase
+
+	1. To enable code first migrations, open package manager console nvigate to tools > NuGet package manager > package manager console.
+	2. Then create a class called "MyDBContext".
+	3. Next add these things to that class.
+	 
+		using System;
+		using System.Collections.Generic;
+		using System.Data.Entity;
+		using System.Linq;
+		using System.Web;
+		using Vidly.ViewModels;
+
+		namespace Vidly.Models
+		{
+			public class MyDBContext : DbContext
+			{
+				public MyDBContext()
+				{
+
+				}
+				public DbSet<Customer> Customers { get; set; } // My domain models
+				public DbSet<Movie> Movies { get; set; }// My domain models
+
+			}
+		}
+	 
+	4. Then type on the console "enable-migrations -contexttypename MyDBContext".
+	5. Then type "add-migration InitialModel"
+
+	
+# Fifth Phase
+
+	1. Every time when you create attribute you need add those into database as "add-migration <custom name of migration>". Then type "update-database" to update changes.
+	
+
+# Sixeth Phase
+
+	1. To insert some data into a table manually, we can use migrations.
+	2. type add-migration <custom name>. Then empty migration will open. Now in the up method we can write our sql quaries to execute. 
+		ex -: Sql("INSERT INTO <table-name> (<column-names>) VALUES (<values>)");
+	3. Now run "update-database".
+	
+# Seventh Phase
+	1. To apply database features like character size, nullable state, Ect. We can use [Required], [StringLength(255)] to name attribute in Customer class.
+		
+		using System.ComponentModel.DataAnnotations;
+		
+        [Required]
+        [StringLength(255)]
+		public string Name { get; set; }
+		
+	2. To apply ne changes use add-migration <custom name> and then update-database.
+	
+
+Below places must concern when we do this Section
+	1. Model
+		i) Customer.cs
+		ii) MembershipType.cs
+		iii) ApplicationDbContext.cs
+		
+	2. Controllers
+		i) CustomerController.cs
+	
+	3. ViewModels
+		i) CustomerFormViewModel.cs
+	
+	4. View
+		i) Details.cshtml
+		ii) Index.cshtml

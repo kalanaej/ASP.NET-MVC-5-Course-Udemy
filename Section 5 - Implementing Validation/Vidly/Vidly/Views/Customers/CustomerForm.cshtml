@@ -1,0 +1,77 @@
+﻿@model Vidly.ViewModels.CustomerFormViewModel
+
+@{
+    ViewBag.Title = "CustomerForm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>New Customer</h2>
+
+@*
+    1. Create HTML form
+    2. "Create" method should implement on CustomerController.cs
+*@
+
+@using (Html.BeginForm("Save", "Customers"))
+{
+    @*Get validation summery*@
+    @*@Html.ValidationSummary()*@
+
+    @*Get validation summery with custom message*@
+    @Html.ValidationSummary(true, "Please, fix the following errors")
+
+    <div class="form-group">
+        @*Create HTML label*@
+        @Html.LabelFor(m => m.Customer.Name)
+
+        @*Create HTML text-box and give a class name to it*@
+        @Html.TextBoxFor(m => m.Customer.Name, new { @class = "form-control" })
+
+        @*Add validation for name*@
+        @Html.ValidationMessageFor(m => m.Customer.Name)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Customer.Birthdate)
+        @Html.TextBoxFor(m => m.Customer.Birthdate, "{0:d MMM yyyy}", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Customer.Birthdate)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Customer.MembershipTypeId)
+
+        @*Create drop-down list*@
+        @Html.DropDownListFor(m => m.Customer.MembershipTypeId, new SelectList(Model.MembershipType, "Id", "Name"), "Select Membership Type", new { @class = "form-control" })
+
+        @*Add validation for membership type ID*@
+        @Html.ValidationMessageFor(m => m.Customer.MembershipTypeId)
+    </div>
+
+    <div class="checkbox">
+        <label>
+            @*Create check-box*@
+            @Html.CheckBoxFor(m => m.Customer.IsSubscribedToNewsletter) Subscribed to Newsletter?
+        </label>
+    </div>
+
+    @*Adde Id as async hidden field*@
+    @Html.HiddenFor(m => m.Customer.Id)
+
+    @*Add token to prevent outside sever attacks. This will encrypt values*@
+    @Html.AntiForgeryToken()
+
+    @*Add submit button*@
+    <button type="submit" class="btn btn-primary">Save</button>
+
+}
+
+@*Enable client-side validation*@
+@section scripts
+{
+    @*
+        1. Add Jquery validation bundle.
+        2. Bundles can find from App_start/BundleConfig.cs
+    *@
+    @Scripts.Render("~/bundles/jqueryval")
+
+}
