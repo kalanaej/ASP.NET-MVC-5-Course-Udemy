@@ -1,0 +1,32 @@
+# Phase 3
+	1. To install bootbox.js pluging type "install-package bootbox -version:4.3.0" in package manager console.
+	2. You can view installed files in Scripts folder
+		i) Scripts/bootbox.js
+		ii) Scripts/bootbox.min.js
+	3. Next, add bootbox bundle into App_Start/BundleConfig.cs
+	
+# Phase 5
+	1. To install JQuery DataTables pluging type "install-package jquery.datatables -version:1.10.11" in package manager console.
+	2. You can view installed files in Scripts/DataTables folder.
+	3. Next we try to add JQUery and Bootstrap into same folder.
+		i) Go to Shared/_Layout.cstml. Then made changes.
+		ii) Go to App_Start/BundleConfig.cs. Then made changes.
+		iii) Call dattables in Customer/Index.cshtml
+			
+	
+	
+Below places must concern when we do this Section	
+	1. View/Customer
+		i) Index.cshtml
+		ii) _Layout.cshtml
+	
+	2. App_Start
+		i) BundleConfig.cs
+		ii) MappingProfile.cs
+		
+	3. Controllers/Api
+		i) CustomersController.cs
+	
+	4. Dtos
+		i) CustomerDto.cs
+		ii) MembershipTypeDto.cs
