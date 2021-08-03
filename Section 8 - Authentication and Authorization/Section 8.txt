@@ -1,0 +1,150 @@
+- After changing Vidly project from "No Authentication" to "Individual User Account", There are few bugs occured like delete option not working.
+
+- Therefore, I had to download and run Instructor code and had to apply these changes to his code
+
+	1. Web.Config
+		<connectionStrings>
+			<add name="NotificationConnection" connectionString="Data Source=(localdb)\MSSQLLocalDB; Initial Catalog=ApplicationNameContext-20151023111236; Integrated Security=True;" providerName="System.Data.SqlClient" />
+		</connectionStrings>
+		
+	2. IdentifyModels.cs
+		public ApplicationDbContext(): base("NotificationConnection", throwIfV1Schema: false)
+        {
+        }
+		
+	3. execute "update-database" command in Package Manager Console
+	
+# Phase 5
+	1. When adding "[Authorize]" keyword, we can add that in three ways.
+		i) Add to specific action in controller.
+		
+			[Authorize]
+			public ViewResult Index()
+			{
+				return View();
+			}
+		
+		ii) Add to entire controller.
+		
+			[Authorize]
+			namespace Vidly.Controllers
+			{
+				public class CustomersController : Controller
+				{
+					...
+				}
+			}
+		
+		iii) Add as a Global authorization. (Navigate to App_Start/FilterConfig.cs
+		
+			filters.Add(new AuthorizeAttribute());
+			
+	2. When adding Global authorization, the problem is we cannot view even Home page without login. We can fix this issue by navigate to Controllers/HomeController.cs
+	
+		namespace Vidly.Controllers
+		{
+			[AllowAnonymous]
+			public class HomeController : Controller
+			{
+				...
+			}
+		}
+
+# Phase 6		
+	1. To seed users and roles
+		i) create new user called guest@vidly.com in register panel.
+		ii) Then go to Controllers/AccountController.cs and add these into Register(RegisterViewModel model) method.
+		
+			var roleStore = new RoleStore<IdentityRole>(new ApplicationDbContext());
+            var roleManager = new RoleManager<IdentityRole>(roleStore);
+            await roleManager.CreateAsync(new IdentityRole("CanManageMovies"));
+            await UserManager.AddToRoleAsync(user.Id, "CanManageMovies");
+			
+		iii) logoff from guest and register a new user as admin@vidly.com
+		iV) Then comment above code lines and "add-migration SeedUser" in PM console
+		V) Before editing SeedUser, select all data from AspNetUsers table (guest and admin data) and  right-click/script then copy queries. Then paste into Up method in SeedUser migration
+		Vi) Also, select all data from AspNetRoles table (guest and admin data) and  right-click/script then copy queries. Then paste into Up method in SeedUser migration
+		vii) Also, Also, select all data from AspNetUserRoles table (guest and admin data) and  right-click/script then copy queries. Then paste into Up method in SeedUser migration
+		
+			public override void Up()
+			{
+				Sql(@"
+					// AspNetUsers table script
+					INSERT INTO [dbo].[AspNetUsers] ([Id], [Email], [EmailConfirmed], [PasswordHash], [SecurityStamp], [PhoneNumber], [PhoneNumberConfirmed], [TwoFactorEnabled], [LockoutEndDateUtc], [LockoutEnabled], [AccessFailedCount], [UserName]) VALUES (N'33e5e80a-724d-45e6-9012-d9217195f0f1', N'admin@vidly.com', 0, N'AFOZirZIzHqg1sH2/imWy26tSSAcn2FAM3NLsyG/WRZ8XOGaMW5UlclmwmiYPhsrKQ==', N'27b34575-45eb-40f1-b7d0-221246559732', NULL, 0, 0, NULL, 1, 0, N'admin@vidly.com')
+					INSERT INTO [dbo].[AspNetUsers] ([Id], [Email], [EmailConfirmed], [PasswordHash], [SecurityStamp], [PhoneNumber], [PhoneNumberConfirmed], [TwoFactorEnabled], [LockoutEndDateUtc], [LockoutEnabled], [AccessFailedCount], [UserName]) VALUES (N'f4dfad02-bc49-4b72-bd80-228fa428dfcf', N'guest@vidly.com', 0, N'ADR0zmizOW3mr3i76gJNybEbPdZ6PDbCCCBZx/WlUdcrlVyiROV+pm5AAyRfMCjRbg==', N'84b34113-46c4-4db5-9857-ea965728df2c', NULL, 0, 0, NULL, 1, 0, N'guest@vidly.com')
+
+					// AspNetRoles table script
+					INSERT INTO [dbo].[AspNetRoles] ([Id], [Name]) VALUES (N'8cd2eebf-6f7b-4dc3-8338-d86606ea81ef', N'CanManageMovies')
+					
+					// AspNetUserRoles table script
+					INSERT INTO [dbo].[AspNetUserRoles] ([UserId], [RoleId]) VALUES (N'33e5e80a-724d-45e6-9012-d9217195f0f1', N'8cd2eebf-6f7b-4dc3-8338-d86606ea81ef')
+				");
+			}
+			
+		viii) Now we can delete above tables data(AspNetUsers, AspNetRoles, AspNetUserRoles) before update-database command.
+		ix) After data deletion, we can execute "update-database" command.
+		
+# Phase 7
+	1. In here, we are going to restrict some actions for guest users.
+		ex -: Admin (admin@vidly.com) can manage movies but guest (guets@vidly.com) cannot manage movies.
+	
+	2. But, this method have some security holes. guest can get access to admin privilage by editing urls.
+	
+	3. To fix that issue we can use [Authoriz] method.
+	
+		[Authorize(Roles = "<Role Name>")]
+	
+	4. The problem is we have to put above code line to every method and it may be messy.
+
+# Phase 8
+	1. Adding driving license to register page.
+	2. Add driving license variable into Model/IdentifyModels.cs file and then add-migration AddDrivingLicenseToApplicationUser
+	3. Execute "update-database"
+	4. Then go to Views/Account/Register.cshtml to add Driving License view.
+	5. In @model Vidly.Models.RegisterViewModel line select and righ-click on "RegisterViewModel" and click "go to implementation"
+	6. You will be navigate to AccountViewModel.cs file. In there add driving license attribute.
+	7. After inserting driving license we need get method to retrieve data. Therefore go to Controllers/AccountController.cs/Register(RegisterViewModel model) method. 
+
+# Phase 10
+	1. Login with a social media.
+	2. Before start Social logins we have to enable SSL in the project. Threfore, select project -> press F4 -> SSL Enabled = true
+	3. "SSL URL" is the address we are going establish secure connection between vidly and social media. Therefore, copy the resource in SSL URL field (https://localhost:44324/)
+	4. Then righ-click on the project -> properties -> Web -> Project Url. Then paste copied URL in the field.
+	5. When run the project you can see our new url displays. The problem is project can accesible through http method. Therefore add this field in FilterConfig.cs to prevent that
+	
+		filters.Add(new RequireHttpsAttribute());
+		
+	6. Now, we need to register our application with facebook. Therefore, go to developers.facebook.com
+	7. In there, Create a new app -> None -> give app name as Vidly
+	8. In dashboard click on "set up" button on facebook login banner. Then select setting in left panel. Fill the field called Valid OAuth Redirect URIs ( https://localhost:44324/ ).
+	9. Go to Settings/Basic and copy App ID
+	10. In our project go to App_Start/Startup.Auth.cs and uncomment facebook authentication lines and fill blank attribute values by refering https://developers.facebook.com/apps/883900085543156/settings/basic/.
+	11. Before run the project install owin facebook "install-Package Microsoft.Owin.Security.Facebook".
+	12. After login with facebook you have to enter your e-mail address but after you enter it an error occured.
+	13. To fix that go to Views/Account/ExternalLoginConfirmation.cshtml. Then driving license code field that we previously used in Register.cshtml
+	14. In @model Vidly.Models.ExternalLoginConfirmationViewModel line select and righ-click on "ExternalLoginConfirmationViewModel" and click "go to implementation"
+	15. You will be navigate to AccountViewModel.cs file. In there add driving license attribute.
+	16. Also go to Controllers/AccountController.cs/ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl). Add driving license attribute in there.
+
+Below places must concern when we do this Section	
+	1. Views/Movies
+		i) ReadOnlyList.cshtml
+		ii) Renad Index.cshtml into List.cshtml.
+	
+	2. App_Start
+		i) FilterConfig.cs
+		ii) Startup.Auth.cs
+		
+	3. Controllers
+		i) CustomersController.cs
+		ii) AccountController.cs
+		iii) MoviesControlles.cs
+	
+	4. Models
+		i) RoleName.cs
+		ii) IdentityModels.cs
+		iii) AccountViewModel.cs
+		
+	5. Views/Account
+		i) Register.cshtml
+		ii) ExternalLoginConfirmation.cshtml
