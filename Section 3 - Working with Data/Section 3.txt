@@ -62,8 +62,8 @@
 		
 		using System.ComponentModel.DataAnnotations;
 		
-        [Required]
-        [StringLength(255)]
+        	[Required]
+        	[StringLength(255)]
 		public string Name { get; set; }
 		
 	2. To apply ne changes use add-migration <custom name> and then update-database.
