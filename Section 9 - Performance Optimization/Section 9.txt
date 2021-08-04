@@ -1,0 +1,27 @@
+# Phase 2
+	1. In here, we talk about optimizing our codes.
+	
+	2. In web application, it follows three tier architecture.
+		i) Client - Browser --> less optimization
+		ii) Application - IIS --> average optimization
+		iii) Data - SQL Server --> high optimization
+		
+	3. We can solve web application performence by considering Data tier only.
+	
+# Phase 3
+	1. Optimizing data tier.
+	2. There is a tool called "Glimpse" that can getting real time diagnostics and insights into a application.
+	3. To install that go to Package Manager Console and then type "install-package glimpse.mvc5" and after that execute "install-package glimpse.ef6". "ef" means Entity framework.
+	4. Run then project and edit the URL as " https://localhost:44324/glimpse.axd " and it shows glimpse end-points. You can turn-on or turn-off. This dashboard only accessible via localy.
+	5. Now turn on glimpse. It means glimpse put cookie on your machine and it sent back and forward with each request.
+	6. Now you can navigate through the web app and in below you can see glimpse dashboard. If you click "g" icon on the dashboard, you can see various data tabs.
+	
+# Phase 4
+	1. Optimizing application tier.
+		i) Output Caching.
+		ii) Data Caching.
+		iii) Release Builds.
+		iv) Disabling Sessions.
+		
+# Phase 10
+	1. Optimizing client tier.
