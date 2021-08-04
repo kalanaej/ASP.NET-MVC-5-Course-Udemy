@@ -1,0 +1,189 @@
+# Phase 2
+	1. If you want to return markup, use MVC Controller
+	2. If you want to return data and genarate markup, use API Controller
+	
+
+# Phase 7
+	1. If you have installed web essentials pluggin you can easily create raw html using tab
+	2. write html like this -> div.form-group>label+input[type='text'].form-control
+	3. Then press tab. It will be look like below.
+		
+		    <div class="form-group">
+				<label></label>
+				<input type="text" value="" class="form-control" />
+			</div>
+			
+# Phase 8
+	1. To add auto completion option to Rentals text boxes we need a JQuery plugin called "typeahead"
+	2. To install that go to PM Console and execute "install-package Twitter.Typeahead"
+	3. Then go to App_Start/BundleConfig.cs and add typeahead in lib bundle.
+	4. This pluging only consist of scripts not stylesheets. Therefore, go to " https://opensource.twitter.dev/typeahead.js/ "
+	5. Right-click on the page and go to "View page source". Then click on examples link in " <a href="examples/">or see examples</a> "
+	6. Then click on /css/examples.css in " <link rel="stylesheet" href="../css/examples.css"> "   (view-source:https://opensource.twitter.dev/typeahead.js/css/examples.css)
+	7. Then copy the following section
+	
+		* copy start from
+			.typeahead {
+			  background-color: #fff;
+			}
+			
+		* copy end in
+			.tt-suggestion p {
+			  margin: 0;
+			}
+			
+		** Whole code **
+		
+			.typeahead {
+			  background-color: #fff;
+			}
+
+			.typeahead:focus {
+			  border: 2px solid #0097cf;
+			}
+
+			.tt-query {
+			  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+				 -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+					  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+			}
+
+			.tt-hint {
+			  color: #999
+			}
+
+			.tt-menu {
+			  width: 422px;
+			  margin: 12px 0;
+			  padding: 8px 0;
+			  background-color: #fff;
+			  border: 1px solid #ccc;
+			  border: 1px solid rgba(0, 0, 0, 0.2);
+			  -webkit-border-radius: 8px;
+				 -moz-border-radius: 8px;
+					  border-radius: 8px;
+			  -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+				 -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+					  box-shadow: 0 5px 10px rgba(0,0,0,.2);
+			}
+
+			.tt-suggestion {
+			  padding: 3px 20px;
+			  font-size: 18px;
+			  line-height: 24px;
+			}
+
+			.tt-suggestion:hover {
+			  cursor: pointer;
+			  color: #fff;
+			  background-color: #0097cf;
+			}
+
+			.tt-suggestion.tt-cursor {
+			  color: #fff;
+			  background-color: #0097cf;
+
+			}
+
+			.tt-suggestion p {
+			  margin: 0;
+			}
+			
+	8. Next go to Content and right click on Content folder > Add > Style Sheet. Give the name as "typeahead.css".
+	9. Then go back to App_Start/BundleConfig.cs and add that css into our css bundle.
+	10. Now we have to add plugin. Therefore, go back again to " https://opensource.twitter.dev/typeahead.js/ ". Then click the small link called "Remote". ( https://opensource.twitter.dev/typeahead.js/examples/#remote )
+	
+	
+	11. Copy the JavaScript part and go to Views/Rentals/New.cshtml and past that code below as
+	
+		@section scripts
+		{
+			<script>
+				$(document).ready(function () {
+					var bestPictures = new Bloodhound({
+						datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+						queryTokenizer: Bloodhound.tokenizers.whitespace,
+						prefetch: '../data/films/post_1960.json',
+						remote: {
+							url: '../data/films/queries/%QUERY.json',
+							wildcard: '%QUERY'
+						}
+					});
+
+					$('#remote .typeahead').typeahead(null, {
+						name: 'best-pictures',
+						display: 'value',
+						source: bestPictures
+					});
+				});
+			</script>
+		}
+	
+	
+	12. Then edit it as this
+	
+		@section scripts
+		{
+			<script>
+				$(document).ready(function () {
+					var customers = new Bloodhound({
+						datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+						queryTokenizer: Bloodhound.tokenizers.whitespace,
+						remote: {
+							url: '/api/customers?query=%QUERY',
+							wildcard: '%QUERY'
+						}
+					});
+
+					$('#customer').typeahead({
+						minLength: 3,
+						highlight: true
+					}, {
+						name: 'customers',
+						display: 'name',
+						source: customers
+					});
+				});
+			</script>
+		}
+
+# Phase 13
+	1. To add Toast Notification, we have to install a JQuery plugin via PM Console using "install-package toastr" command.
+	2. Next go to App_Start/BundleConfig.cs and in css bundle add 
+	
+		"~/content/toastr.css"
+		
+	3. In lib bundle add
+
+		"~/scripts/toastr.js"
+		
+	
+
+Below places must concern when we do this Section		
+	1. Controllers/Api
+		i) NewRentalsController.cs
+		ii) CustomersController.cs
+	
+	2. Dtos
+		i) NewRentalDto.cs
+		
+	3. Models
+		i) Rental.cs
+		ii) IdentityModels.cs
+		iii) ApplicationDbContext.cs
+	
+	4. Controllers
+		i) RentalsController.cs
+	
+	5. View/Rentals
+		i) New.cshtml
+		
+	6. View/Shared
+		i)_NavBar.cshtml
+	
+	7. App_Start
+		i) BundleConfig.cs
+	
+	8. Content
+		i) typeahead.css 
+		ii) Site.css
