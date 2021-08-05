@@ -1,0 +1,101 @@
+# Phase 2
+	1. Deploying the application
+	2. To deploy our application right-click on our project and click on "deploy". Select option called "Folder" and then deploy. (C:/Users/user/source/repos/Vidly/Vidly/bin/app.publish/)
+	
+# Phase 3
+	1. Deploying the Database.
+	2. First we need to gather all migrations that we applied. Therefore type "update-database -script -SourceMigration:<migration name to start from>" to get sequal script that includes all our migrations.
+	3. All data export as sql file.
+	
+# Phase 4
+	1. To build configurations go to "Debug" drop down list and select Configuration Manager. 
+	2. Again click on Debug in opened window and select "<New>"
+	3. Name it as "Testing". Select Release option for "Copy settings from" field. Then click Ok.
+	4. Next go to Web.Config and right-click on it. Then select "Add Config Transform". You can see new config file occured under Web.Config file.
+	5. In that new file uncomment the <connectionString> section. Then change the connection name as "NotificationConnection" (in my case).
+	6. Publish the project again and this time select configuration as "Testing".
+	
+# Phase 5
+	1. To store sensitive data like social media login details, we can use Web.Config <appSettings> section.
+	
+		<appSettings>
+			<add key="FacebookAppId" value="12345" />
+			<add key="FacebookAppSecret" value="abcde" />
+	
+	2. Then go to App_Start/Startup.Suth.cs change facebook settings
+	
+		app.UseFacebookAuthentication(
+            appId: ConfigurationManager.AppSettings["FacebookAppId"],
+            appSecret: ConfigurationManager.AppSettings["FacebookAppSecret"]
+        );
+		
+	3. Remember that <appSettings> always returning string type values.
+	
+
+# Phase 6
+	1. Securing configuration settings. Use below methods if you application needs security manner
+	2. Previously we store Facebook details as plain text. That is too risky. 
+	3. To fix that issue, right-click on the project > Add > New item > select Web Configuration File. Give it a name as "AppSettings.config".
+	4. Delete everything in AppSettings.config file and go to Web.Config cut the <appSettings> section and paste those in AppSettings.config file
+	5. Add new <appSettings> section to Web.Config as 
+	
+		<appSettings configSource="AppSettings.config"></appSettings>
+		
+	6. You can apply above configuration to <connectionString> section also.
+	7. Now we are going to encrypt facebook sensitive data in AppSettings.config file.
+	8. Go to windows search bar and type "Developer Command Prompt" and run it as Administrator.
+	9. Type " aspnet_regiis -pef "appSettings" "c:\deploy" -prov "DataProtectionConfigurationProvider" " and execute.
+	10. Go to c:\deploy and open AppSettings.config. You can see our data is encrypted.
+	11. If you want to decrypt it type " aspnet_regiis -pdf "appSettings" "c:\deploy" "
+	
+# Phase 7
+	1. In here, we hide the code errors from web page view when executing.
+	2. To fix that, go to Web.Config. Under <system.web> type 
+	
+		<customErrors mode="on"></customErrors>
+		
+	3. But in real world, it is better to use mode="RemoteOnly". Because it allows outsiders to custom error message and to us it shows the code errors in browser.
+	4. Those error mesages are coming from Views?Shared/Error.cshtml
+	5. Error.cshtml is served by App_Start/Filter.Config.cs file.
+	6. But Error.cshtml cannot handle 404 errors. Therefore, create custome error page to handle that.
+	
+		<customErrors mode="On">
+			<error statusCode="404" redirect="~/404.html"/>
+		</customErrors>
+		
+	7. To create that html right-click on the project > Add > HTML page.
+	
+	8. Add below code under <system.webServer>. It will response to user with error code.
+		<httpErrors errorMode="DetailedLocalOnly">
+		  <remove statusCode="404"/>
+		  <error statusCode="404" path="404.html" responseMode="File"/>
+		</httpErrors>
+
+# Phase 8
+	1. To handle error logging modules and handlers, execute "install-package Elmah" on PM Console
+	2. If you got exception in server edit the url as https://localhost:44324/elmah.axd and elmah shows the further details of the exception.
+	3. If you want to give elmah access to specific user got to Web.Config <elmah> section. Then uncomment <authorization> section and edit and use it as below
+
+		<authorization>
+			<allow users="admin@vidly.com" />
+			<deny users="*" />
+		  </authorization>
+	
+Below places must concern when we do this Section		
+	1. App_Start
+		i) Startup.Auth.cs
+		ii) Bundle.Config.cs
+	
+	2. Web.Config
+		i) Web.Testing.Config
+	
+	3. AppSettings.config
+	
+	4. 404.html
+	
+	5. Content
+		i) typeahead.css
+		
+	6. Views/Customers/
+		i) Index.cshtml
+		ii) CustomersForm.cshtml
